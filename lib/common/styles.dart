@@ -196,7 +196,8 @@ class CommonStyle {
       focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
           borderSide: BorderSide(color: Colors.green)),
-      hintText: "Adicionar Nova Tarefa",
+      hintText: hintTextStr,
+      labelText: labelTextStr,
       contentPadding: EdgeInsets.all(15.0),
     );
   }
