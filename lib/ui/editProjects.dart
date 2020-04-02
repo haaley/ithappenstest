@@ -32,7 +32,8 @@ class _EditProjectWidgetState extends State<EditProjectWidget> {
   void initState() {
     super.initState();
     _titleController = new TextEditingController(text: widget.projeto.titulo);
-    _dateController = new TextEditingController(text: format.format(widget.projeto.dataDaEntrega));
+    _dateController = new TextEditingController(
+        text: format.format(widget.projeto.dataDaEntrega));
     taskList = widget.projeto.tarefas;
     _taskController = new TextEditingController();
     date = widget.projeto.dataDaEntrega;
@@ -43,24 +44,44 @@ class _EditProjectWidgetState extends State<EditProjectWidget> {
     return Scaffold(
         appBar: AppBar(
           actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.save,
-                color: Colors.white,
+            Builder(
+              builder: (context) => IconButton(
+                icon: Icon(
+                  Icons.save,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  {
+                    if (_formKey.currentState.validate()) {
+                      _formKey.currentState.save();
+
+                      if (widget.model.projetos.indexWhere(
+                              (p) => p.titulo == _titleController.text) <
+                          0) {
+                        var projeto = Project(
+                            titulo: _titleController.text,
+                            dataDaEntrega: date,
+                            id: widget.projeto.id,
+                            tarefas: taskList);
+                        print(projeto);
+                        widget.model.onUpdateProjects(projeto);
+                        Navigator.pushNamed(context, '/');
+                      } else {
+                        final snackBar = SnackBar(
+                          content: Text('Nome de projeto indisponível'),
+                          action: SnackBarAction(
+                            label: 'Ok',
+                            onPressed: () {
+                              // Some code to undo the change.
+                            },
+                          ),
+                        );
+                        Scaffold.of(context).showSnackBar(snackBar);
+                      }
+                    }
+                  }
+                },
               ),
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  _formKey.currentState.save();
-                  var projeto = Project(
-                      titulo: _titleController.text,
-                      dataDaEntrega: date,
-                      id: widget.projeto.id,
-                      tarefas: taskList);
-                  print(projeto);
-                  widget.model.onUpdateProjects(projeto);
-                  Navigator.pushNamed(context, '/');
-                }
-              },
             )
           ],
           title: Text("Editar projeto " + widget.projeto.titulo),
@@ -156,7 +177,8 @@ class _EditProjectWidgetState extends State<EditProjectWidget> {
                                     _formKey.currentState.save();
                                     Tarefa task = new Tarefa(
                                         titulo: _taskController.text,
-                                        id: DateTime.now().millisecondsSinceEpoch);
+                                        id: DateTime.now()
+                                            .millisecondsSinceEpoch);
                                     if (taskList.indexWhere(
                                             (t) => t.titulo == task.titulo) <
                                         0) {
@@ -220,11 +242,11 @@ class _EditProjectWidgetState extends State<EditProjectWidget> {
                                   return Container(
                                     width: double.infinity,
                                     padding:
-                                    EdgeInsets.symmetric(horizontal: 10.0),
+                                        EdgeInsets.symmetric(horizontal: 10.0),
                                     margin: EdgeInsets.only(bottom: 10.0),
                                     child: Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                          MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
                                         Expanded(
                                           child: TextFormField(
@@ -240,7 +262,13 @@ class _EditProjectWidgetState extends State<EditProjectWidget> {
                                               setState(() {
                                                 print("antes");
                                                 print(taskList);
-                                                taskList =  taskList.map((t) => t.id == tarefa.id ? t.copyWith(titulo: value) : t).toList();
+                                                taskList = taskList
+                                                    .map((t) =>
+                                                        t.id == tarefa.id
+                                                            ? t.copyWith(
+                                                                titulo: value)
+                                                            : t)
+                                                    .toList();
                                                 print("depois");
                                                 print(taskList);
                                                 enable = !enable;
@@ -253,8 +281,8 @@ class _EditProjectWidgetState extends State<EditProjectWidget> {
                                           onPressed: () {
                                             setState(() {
                                               var index = taskList.indexWhere(
-                                                      (t) =>
-                                                  t.titulo ==
+                                                  (t) =>
+                                                      t.titulo ==
                                                       tarefa.titulo);
 
                                               print("o index é" +
